@@ -1,24 +1,22 @@
 import { MikroORM } from '@mikro-orm/core';
-import { __prod__ } from './constants';
-import { Post } from './entities/Post';
-import mikroConfig from './mikro-orm.config';
-import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
+import express from 'express';
+import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
+import mikroConfig from './mikro-orm.config';
 import { HelloResolver } from './resolvers/hello';
 import { PostResolver } from './resolvers/post';
-import 'reflect-metadata';
 
 const main = async () => {
     const orm = await MikroORM.init(mikroConfig);
-    // await orm.getMigrator().up(); // Runs table migrations
+    await orm.getMigrator().up(); // Runs table migrations
 
     const app = express();
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [HelloResolver, PostResolver],
-            validate: false,
+            validate: false
         }),
         context: () => ({ em: orm.em })
     });
@@ -31,9 +29,6 @@ const main = async () => {
     app.listen(port, () => {
         console.log(`Server started on port ${port}`);
     });
-
-    // const posts = await orm.em.find(Post, {});
-    // console.log(posts);
 }
 
 main();
