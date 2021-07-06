@@ -44,16 +44,62 @@ sess:qwdjafklejafjea -> { userId: 1 }
 6 Stores the retrieved data on req.session
 req.session.userId = 1;
 
-Initialize nextjs with chakra
-https://github.com/vercel/next.js/tree/canary/examples/with-chakra-ui
-yarn create next-app --example with-chakra-ui with-chakra-ui-app
+<br /> <br />
 
-for normal -
-yarn create react-app [app-name] --template typescript
-or
-create-react-app [app-name] --typescript
+# Client
 
-## client
+## General Steps
 
-- urql for graphql queries
-- graphql codegen: generates typescript types for our queries/urql hooks
+1. [Build react-app with a typescript template](#client-1)
+2. [Hook up urql for graphql queries](#client-2)
+3. [Initialize graphql codegen: generates typescript types for our queries/urql hooks](#client-3)
+
+## Starting with a Typescript Template {#client-1}
+
+Normal:
+
+- yarn create react-app [app-name] --template typescript
+- create-react-app [app-name] --typescript
+
+Chakra + next.js
+
+- https://github.com/vercel/next.js/tree/canary/examples/with-chakra-ui
+- yarn create next-app --example with-chakra-ui with-chakra-ui-app
+
+https://www.graphql-code-generator.com/docs/getting-started/installation
+
+<br />
+
+## Hook up urql for graphql queries {#client-2}
+
+- https://formidable.com/open-source/urql/docs/basics/react-preact/
+
+`const client = createClient({ `
+` url: "http://localhost:xxxx/graphql",`
+` fetchOptions: {`
+` credentials: "include",`
+` },`
+`});`
+
+`const [, register] = useMutation(REGISTER_MUT);`
+
+- Make sure cors is set up properly
+
+## Graphql-codgen Initialization {#client-3}
+
+- yarn add -D @graphql-codegen/cli
+
+### yarn graphql-codegen init
+
+- What type of application are you building? Application built with React
+- Where is your schema?: (path or url) http://localhost:xxxx
+- Where are your operations and fragments?: 'src/graphql/**/*.graphql'
+- Pick plugins: TypeScript (required by other typescript plugins), TypeScript Operations (operations and fragments)
+- Where to write the output: src/generated/graphql.tsx
+- Do you want to generate an introspection file? No
+- How to name the config file? codegen.yml
+- What script in package.json should run the codegen? gen
+
+  yarn add -D @graphql-codegen/typescript-urql
+
+replace 'typescript-react-apollo' with 'typescript-urql' in the codegen.yml plugins section
