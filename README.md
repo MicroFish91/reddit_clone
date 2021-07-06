@@ -78,8 +78,9 @@
 ## General Steps
 
 1. [Build react-app with a typescript template](#Starting-with-a-Typescript-Template)
-2. [Hook up urql for graphql queries](#Hook-up-urql-for-graphql-queries)
-3. [Initialize graphql codegen: generates typescript types for our queries/urql hooks](#Graphql-codgen-Initialization)
+2. [Optional: Setting up ChakraUI](#)
+3. [Hook up urql for graphql queries](#Hook-up-urql-for-graphql-queries)
+4. [Initialize graphql codegen: generates typescript types for our queries/urql hooks](#Graphql-codgen-Initialization)
 
 ## Starting with a Typescript Template
 
@@ -93,7 +94,13 @@ Chakra + next.js
 - https://github.com/vercel/next.js/tree/canary/examples/with-chakra-ui
 - yarn create next-app --example with-chakra-ui with-chakra-ui-app
 
-https://www.graphql-code-generator.com/docs/getting-started/installation
+## Setting up Chakra UI
+
+- https://chakra-ui.com/docs/getting-started
+- Forms using Formik:  https://chakra-ui.com/docs/form/form-control#usage-with-form-libraries
+- Special Formik Hooks:
+``` const [field, { error }] = useField(props); ```
+
 
 ## Hook up urql for graphql queries
 
@@ -106,13 +113,19 @@ https://www.graphql-code-generator.com/docs/getting-started/installation
 ` },` <br />
 `});` <br />
 
+- Special Hooks:
+
 `const [, register] = useMutation(REGISTER_MUT);`
 
 - Make sure cors is set up properly
 
 ## Graphql-codgen Initialization
 
+- https://www.graphql-code-generator.com/docs/getting-started/installation
+
 - yarn add -D @graphql-codegen/cli
+
+- yarn add -D @graphql-codegen/typescript-urql
 
 <br />
 
@@ -135,5 +148,3 @@ https://www.graphql-code-generator.com/docs/getting-started/installation
   &nbsp;&nbsp;&nbsp; - What script in package.json should run the codegen? gen
 
 <br />
-
-- yarn add -D @graphql-codegen/typescript-urql
