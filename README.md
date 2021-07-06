@@ -1,48 +1,74 @@
-## server
+# Server
 
-tsc tut: 2) demo configuration inheritance
+1. [Initialize project and set up Typescript](#Project-Config)
+2. [Mikro-ORM Setup](#Mikro-ORM-Setup)
+3. [GraphQL Setup](#GraphQL-Setup)
+4. [Redis Caching for user login cookies](#Redis-Caching)
 
-npm init -y
+## Project Config
 
-Typescript Config:
--yarn add -D @types/node typscript ts-node
--ts-config: npx tsconfig.json
+- npm init -y
+- yarn add -D @types/node typscript ts-node
+- npx tsconfig.json
 
-Mikro-Orm:
-yarn add @mikro-orm/cli @mikro-orm/core @mikro-orm/migrations @mikro-orm/postgresql pg
+## Mikro-ORM Setup
 
-after setting config, create migrations using:
-npx mikro-orm migration:create
+- https://mikro-orm.io/docs/installation
+- yarn add @mikro-orm/cli @mikro-orm/core @mikro-orm/migrations @mikro-orm/postgresql pg
+- Set up Config files
 
-const post = orm.em.create(Post, { title: 'my first post' });
-await orm.em.persistAndFlush(post);
+- Create Migrations:
+  - npx mikro-orm migration:create <br /> <br />
 
-Redis:
-sudo service redis-server start
-sudo service redis-server stop
-sudo service redis-server restart
+- Add Tables Via SQL Migration <br />
+```await orm.getMigrator().up();```
 
-for cookies - graphQL settings:
-"request.credentials": "include"
+- To manually add rows
 
-Steps for reading user through session cookies & redis:
+```const post = orm.em.create(Post, { title: 'my first post' }); ``` <br />
+```await orm.em.persistAndFlush(post);```
 
-1 Send session data to redis (key: value pair)
-sess:qwdjafklejafjea -> { userId: 1 }
+## GraphQL Setup
 
-2 Expression middleware will set signed cookie on browser
-qwdjafklejafjeaaafgeagzxcbdea
+- Setup Apollo server to implement GraphQL API, route through express <br />
+``` const apolloServer = new ApolloServer({ ``` <br />
+```    schema: await buildSchema({ ``` <br />
+```      resolvers: [HelloResolver, PostResolver, UserResolver], ``` <br />
+```      validate: false, ``` <br />
+```    }), ``` <br />
+```    context: ({ req, res }): MyContext => ({ em: orm.em, req, res }), ``` <br />
+```  }); ``` <br />
+- Hooking up resolvers will set up basic graphQL queries and mutations
+- Go to 'http://localhost:xxxx/graphql for queries and mutations playground
 
-3 When user makes a request, the cookie is sent to the server
+## Redis Caching
 
-4 Server unsigns/decrypts the cookie using the secret that we initially specified
-qwdjafklejafjeaaafgeagzxcbdea -> sess:qwdjafklejafjea
+- General Breakdown: Steps for reading user through session cookies & redis:
 
-5 Make a request to redis to get data
-sess:qwdjafklejafjea -> { userId: 1 }
+  1. Send session data to redis (key: value pair)
+  sess:qwdjafklejafjea -> { userId: 1 }
 
-6 Stores the retrieved data on req.session
-req.session.userId = 1;
+  2. Expression middleware will set signed cookie on browser
+  qwdjafklejafjeaaafgeagzxcbdea
+
+  3. When user makes a request, the cookie is sent to the server
+
+  4. Server unsigns/decrypts the cookie using the secret that we initially specified
+  qwdjafklejafjeaaafgeagzxcbdea -> sess:qwdjafklejafjea
+
+  5. Make a request to redis to get data
+  sess:qwdjafklejafjea -> { userId: 1 }
+
+  6. Stores the retrieved data on req.session
+  req.session.userId = 1;
+
+- for cookies - graphQL settings: <br />
+```"request.credentials": "include"```
+
+- Commands (For Windows - Run via Ubuntu on VM first): <br />
+```sudo service redis-server start``` <br />
+```sudo service redis-server stop``` <br />
+```sudo service redis-server restart``` <br />
 
 <br /> <br />
 
@@ -68,18 +94,16 @@ Chakra + next.js
 
 https://www.graphql-code-generator.com/docs/getting-started/installation
 
-<br />
-
 ## Hook up urql for graphql queries
 
 - https://formidable.com/open-source/urql/docs/basics/react-preact/
 
-`const client = createClient({ `
-` url: "http://localhost:xxxx/graphql",`
-` fetchOptions: {`
-` credentials: "include",`
-` },`
-`});`
+`const client = createClient({ ` <br />
+` url: "http://localhost:xxxx/graphql",` <br />
+` fetchOptions: {` <br />
+` credentials: "include",` <br />
+` },` <br />
+`});` <br />
 
 `const [, register] = useMutation(REGISTER_MUT);`
 
@@ -89,17 +113,26 @@ https://www.graphql-code-generator.com/docs/getting-started/installation
 
 - yarn add -D @graphql-codegen/cli
 
-### yarn graphql-codegen init
+<br />
 
-- What type of application are you building? Application built with React
-- Where is your schema?: (path or url) http://localhost:xxxx
-- Where are your operations and fragments?: 'src/graphql/**/*.graphql'
-- Pick plugins: TypeScript (required by other typescript plugins), TypeScript Operations (operations and fragments)
-- Where to write the output: src/generated/graphql.tsx
-- Do you want to generate an introspection file? No
-- How to name the config file? codegen.yml
-- What script in package.json should run the codegen? gen
+- yarn graphql-codegen init:
 
-  yarn add -D @graphql-codegen/typescript-urql
+  &nbsp;&nbsp;&nbsp; - What type of application are you building? React
 
-replace 'typescript-react-apollo' with 'typescript-urql' in the codegen.yml plugins section
+  &nbsp;&nbsp;&nbsp; - Where is your schema?: 'http://localhost:xxxx'
+
+  &nbsp;&nbsp;&nbsp; - Where are your operations and fragments?: 'src/graphql/**/*.graphql'
+
+  &nbsp;&nbsp;&nbsp; - Pick plugins: TypeScript (required by other typescript plugins), TypeScript Operations (operations and fragments)
+
+  &nbsp;&nbsp;&nbsp; - Where to write the output: 'src/generated/graphql.tsx'
+
+  &nbsp;&nbsp;&nbsp; - Do you want to generate an introspection file? No
+
+  &nbsp;&nbsp;&nbsp; - How to name the config file? 'codegen.yml'
+
+  &nbsp;&nbsp;&nbsp; - What script in package.json should run the codegen? gen
+
+<br />
+
+- yarn add -D @graphql-codegen/typescript-urql
