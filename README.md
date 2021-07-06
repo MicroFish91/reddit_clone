@@ -10,6 +10,7 @@
 - npm init -y
 - yarn add -D @types/node typscript ts-node
 - npx tsconfig.json
+- Set up package.json scripts
 
 ## Mikro-ORM Setup
 
