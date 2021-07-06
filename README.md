@@ -50,11 +50,11 @@ req.session.userId = 1;
 
 ## General Steps
 
-1. [Build react-app with a typescript template](#client-1)
-2. [Hook up urql for graphql queries](#client-2)
-3. [Initialize graphql codegen: generates typescript types for our queries/urql hooks](#client-3)
+1. [Build react-app with a typescript template](#Starting-with-a-Typescript-Template)
+2. [Hook up urql for graphql queries](#Hook-up-urql-for-graphql-queries)
+3. [Initialize graphql codegen: generates typescript types for our queries/urql hooks](#Graphql-codgen-Initialization)
 
-## Starting with a Typescript Template {#client-1}
+## Starting with a Typescript Template
 
 Normal:
 
@@ -70,7 +70,7 @@ https://www.graphql-code-generator.com/docs/getting-started/installation
 
 <br />
 
-## Hook up urql for graphql queries {#client-2}
+## Hook up urql for graphql queries
 
 - https://formidable.com/open-source/urql/docs/basics/react-preact/
 
@@ -85,7 +85,7 @@ https://www.graphql-code-generator.com/docs/getting-started/installation
 
 - Make sure cors is set up properly
 
-## Graphql-codgen Initialization {#client-3}
+## Graphql-codgen Initialization
 
 - yarn add -D @graphql-codegen/cli
 
