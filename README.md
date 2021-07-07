@@ -29,6 +29,20 @@
 ```const post = orm.em.create(Post, { title: 'my first post' }); ``` <br />
 ```await orm.em.persistAndFlush(post);```
 
+ - If using Query Builder/Knex to inject more manual style SQL, need to import Entity Manager
+
+ ``` import { EntityManager } from "@mikro-orm/postgresql"; ``` <br /> <br />
+ ``` const result = await (em as EntityManager) ``` <br />
+ ```       .createQueryBuilder(User) ``` <br />
+ ```       .getKnexQuery() ``` <br />
+ ```       .insert({ ``` <br />
+ ```         username: options.username, ``` <br />
+ ```         password: hashedPassword, ``` <br />
+ ```         created_at: new Date(), ``` <br />
+ ```         updated_at: new Date(), ``` <br />
+ ```       }) ``` <br />
+ ```       .returning("*"); ``` <br />
+
 ## GraphQL Setup
 
 - Setup Apollo server to implement GraphQL API, route through express <br />
@@ -78,7 +92,7 @@
 ## General Steps
 
 1. [Build react-app with a typescript template](#Starting-with-a-Typescript-Template)
-2. [Optional: Setting up ChakraUI](#)
+2. [Optional: Setting up ChakraUI](#Setting-up-Chakra-UI)
 3. [Hook up urql for graphql queries](#Hook-up-urql-for-graphql-queries)
 4. [Initialize graphql codegen: generates typescript types for our queries/urql hooks](#Graphql-codgen-Initialization)
 
@@ -119,7 +133,7 @@ Chakra + next.js
 
 - Make sure cors is set up properly
 
-## Graphql-codgen Initialization
+## Graphql-codegen Initialization
 
 - https://www.graphql-code-generator.com/docs/getting-started/installation
 
@@ -133,7 +147,7 @@ Chakra + next.js
 
   &nbsp;&nbsp;&nbsp; - What type of application are you building? React
 
-  &nbsp;&nbsp;&nbsp; - Where is your schema?: 'http://localhost:xxxx'
+  &nbsp;&nbsp;&nbsp; - Where is your schema?: 'http://localhost:xxxx/graphql'
 
   &nbsp;&nbsp;&nbsp; - Where are your operations and fragments?: 'src/graphql/**/*.graphql'
 
@@ -148,3 +162,9 @@ Chakra + next.js
   &nbsp;&nbsp;&nbsp; - What script in package.json should run the codegen? gen
 
 <br />
+
+- under codegen.yml > plugins, add: "typescript-urql"
+
+- 'yarn gen' will look in graphql folder and convert code into 'generated' folder
+
+- allows us to replace usemutation with custom hooks
