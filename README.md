@@ -170,3 +170,8 @@ Chakra + next.js
 - allows us to replace usemutation with custom hooks
 
 - see register 'register.graphql' vs 'login.graphql" for example of two ways to do the same thing
+
+## To Sort
+
+- Routing using nextlink
+``` import NextLink from "next/link"; ```

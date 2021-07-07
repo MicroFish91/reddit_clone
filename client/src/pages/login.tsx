@@ -11,6 +11,7 @@ interface loginProps {}
 
 const Login: React.FC<loginProps> = ({}) => {
   const router = useRouter();
+  // https://formidable.com/open-source/urql/docs/api/urql/#usemutation
   const [, login] = useLoginMutation();
   return (
     <Wrapper variant="small">
