@@ -168,3 +168,5 @@ Chakra + next.js
 - 'yarn gen' will look in graphql folder and convert code into 'generated' folder
 
 - allows us to replace usemutation with custom hooks
+
+- see register 'register.graphql' vs 'login.graphql" for example of two ways to do the same thing
