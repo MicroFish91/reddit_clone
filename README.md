@@ -173,5 +173,19 @@ Chakra + next.js
 
 ## To Sort
 
-- Routing using nextlink
-``` import NextLink from "next/link"; ```
+- URQL by default does not come with a normalized cache, they have it set up in a separate package called graphcache
+- We can update this cache to allow the page to reload based on certain information changes, otherwise things like the login/logout will not refresh the page dynamically without manual reload
+- https://formidable.com/open-source/urql/docs/graphcache/normalized-caching/ <br />
+``` @urql/exchange-graphcache ``` <br /> <br />
+``` cacheExchange({ ``` <br />
+```      updates: { ``` <br />
+```        Mutation: { ``` <br />
+```          logout: (_result, _args, cache, _info) => { ``` <br />
+``` .... ``` <br />
+
+
+- Routing using nextlink <br />
+``` import NextLink from "next/link"; ``` <br /> <br />
+``` <NextLink href="/login"> ```<br />
+```          <Link mr={2}>Login</Link> ```<br />
+```        </NextLink> ```<br />

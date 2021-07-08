@@ -7,7 +7,7 @@ import session from "express-session";
 import redis from "redis";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { __cookiePW__, __prod__ } from "./constants";
+import { COOKIE_NAME, COOKIE_PW, __prod__ } from "./constants";
 import mikroConfig from "./mikro-orm.config";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
@@ -32,7 +32,7 @@ const main = async () => {
 
   app.use(
     session({
-      name: "qid",
+      name: COOKIE_NAME,
       // https://github.com/tj/connect-redis#redisstoreoptions
       store: new RedisStore({
         client: redisClient,
@@ -46,7 +46,7 @@ const main = async () => {
         secure: __prod__, // cookie only works in https
       },
       saveUninitialized: false,
-      secret: __cookiePW__,
+      secret: COOKIE_PW,
       resave: false,
     })
   );

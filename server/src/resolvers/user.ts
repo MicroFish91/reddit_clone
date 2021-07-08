@@ -11,6 +11,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
+import { COOKIE_NAME } from "../constants";
 import { User } from "../entities/User";
 
 // Alternate way to define args
@@ -125,5 +126,20 @@ export class UserResolver {
     req.session.userId = user._id;
 
     return { user };
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext): Promise<Boolean> {
+    return new Promise((resolve) => {
+      req.session.destroy((err) => {
+        res.clearCookie(COOKIE_NAME);
+        if (err) {
+          console.log(err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
   }
 }
