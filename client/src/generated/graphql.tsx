@@ -115,7 +115,7 @@ export type LoginMutation = (
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, '_id' | 'username' | 'createdAt' | 'updatedAt'>
+      & MinimalUserFragment
     )> }
   ) }
 );
@@ -159,6 +159,17 @@ export type MeQuery = (
   )> }
 );
 
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostsQuery = (
+  { __typename?: 'Query' }
+  & { posts: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, '_id' | 'title' | 'createdAt' | 'updatedAt'>
+  )> }
+);
+
 export const MinimalUserFragmentDoc = gql`
     fragment MinimalUser on User {
   _id
@@ -173,14 +184,11 @@ export const LoginDocument = gql`
       message
     }
     user {
-      _id
-      username
-      createdAt
-      updatedAt
+      ...MinimalUser
     }
   }
 }
-    `;
+    ${MinimalUserFragmentDoc}`;
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
@@ -221,4 +229,18 @@ export const MeDocument = gql`
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
+};
+export const PostsDocument = gql`
+    query Posts {
+  posts {
+    _id
+    title
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
 };

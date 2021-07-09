@@ -95,6 +95,7 @@
 2. [Optional: Setting up ChakraUI](#Setting-up-Chakra-UI)
 3. [Hook up urql for graphql queries](#Hook-up-urql-for-graphql-queries)
 4. [Initialize graphql codegen: generates typescript types for our queries/urql hooks](#Graphql-codgen-Initialization)
+5. [SSR with Next-Urql](SSR-with-Next-Urql)
 
 ## Starting with a Typescript Template
 
@@ -171,6 +172,34 @@ Chakra + next.js
 
 - see register 'register.graphql' vs 'login.graphql" for example of two ways to do the same thing
 
+## Setting up SSR with Next-Urql
+
+- https://formidable.com/open-source/urql/docs/advanced/server-side-rendering/#nextjs
+
+- see newly generated createUrqlClient, allows us to wrap components and pass {ssr: true}
+
+- we can remove <provider> from main app when we use next-urql
+
+- Sample SSR Breakdown:
+  1. me -> browse http:localhost:xxxx
+  2. -> next.js server
+  3. -> request graphql server localhost:xxxx
+  4. -> sending back to your browser
+
+- After you've loaded a single page, next.js will not SSR render (will default back to client-side render)
+
+- SSR Rendering Big Pro on Google SEO
+
+- Running a ME query will return null because next server does not have a cookie stored to send back to server for verification
+  - to keep SSR from running through Next.js server, put in the pause command in the hook query: <br />
+  ``` const [{ data, fetching }] = useMeQuery({ ``` <br />
+  ```  pause: true, ``` <br />
+  ``` }); ``` <br />
+  - We only want the query to pause while we we are routing through the Next server, so we can use the following (windows is undefined on Next server): <br />
+  ``` export const isServer = () => typeof window === "undefined"; ``` <br />
+  ``` pause: isServer(), ``` <br />
+
+
 ## To Sort
 
 - URQL by default does not come with a normalized cache, they have it set up in a separate package called graphcache
@@ -189,3 +218,4 @@ Chakra + next.js
 ``` <NextLink href="/login"> ```<br />
 ```          <Link mr={2}>Login</Link> ```<br />
 ```        </NextLink> ```<br />
+
