@@ -13,8 +13,10 @@ import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
+import sendEmail from "./utils/sendEmail";
 
 const main = async () => {
+  // sendEmail("somebody@somebody.com", "yo");
   const orm = await MikroORM.init(mikroConfig);
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();
