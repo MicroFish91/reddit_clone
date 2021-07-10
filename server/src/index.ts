@@ -9,22 +9,30 @@ import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { COOKIE_NAME, COOKIE_PW, __prod__ } from "./constants";
 import mikroConfig from "./mikro-orm.config";
-import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
-import sendEmail from "./utils/sendEmail";
+// import sendEmail from "./utils/sendEmail";
 
 const main = async () => {
   // sendEmail("somebody@somebody.com", "yo");
   const orm = await MikroORM.init(mikroConfig);
+
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();
   const app = express();
 
-  // await orm.getMigrator().up(); // Runs table migrations
+  // ? Deletes all existing user rows
+  // await orm.em.nativeDelete(User, {});
 
-  // https://www.npmjs.com/package/cors#configuration-options
+  // ? Drop Tables
+  // const generator = orm.getSchemaGenerator();
+  // const dropDump = await generator.dropSchema();
+
+  // ? Runs table migrations
+  // await orm.getMigrator().up();
+
+  // * https://www.npmjs.com/package/cors#configuration-options
   app.use(
     cors({
       origin: "http://localhost:3001",
@@ -35,12 +43,12 @@ const main = async () => {
   app.use(
     session({
       name: COOKIE_NAME,
-      // https://github.com/tj/connect-redis#redisstoreoptions
+      // * https://github.com/tj/connect-redis#redisstoreoptions
       store: new RedisStore({
         client: redisClient,
         disableTouch: true,
       }),
-      // https://github.com/expressjs/cookie-session#cookiesessionoptions
+      // * https://github.com/expressjs/cookie-session#cookiesessionoptions
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 30,
         sameSite: "lax", // csrf
@@ -55,7 +63,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver],
+      resolvers: [PostResolver, UserResolver],
       validate: false,
     }),
     context: ({ req, res }): MyContext => ({ em: orm.em, req, res }),

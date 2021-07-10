@@ -18,7 +18,7 @@ import { User } from "../entities/User";
 @InputType()
 class UsernamePasswordInput {
   @Field()
-  username: string;
+  email: string;
   @Field()
   password: string;
 }
@@ -55,10 +55,21 @@ export class UserResolver {
     @Arg("options") options: UsernamePasswordInput,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
+    if (!options.email.includes("@")) {
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "Invalid email",
+          },
+        ],
+      };
+    }
+
     const hashedPassword = await argon2.hash(options.password);
     let user;
     // const user = em.create(User, {
-    //   username: options.username.toLowerCase(),
+    //   email: options.email.toLowerCase(),
     //   password: hashedPassword,
     // });
     try {
@@ -66,7 +77,7 @@ export class UserResolver {
         .createQueryBuilder(User)
         .getKnexQuery()
         .insert({
-          username: options.username,
+          email: options.email,
           password: hashedPassword,
           created_at: new Date(),
           updated_at: new Date(),
@@ -79,15 +90,24 @@ export class UserResolver {
         return {
           errors: [
             {
-              field: "username",
-              message: "username already taken",
+              field: "email",
+              message: "email already taken",
             },
           ],
         };
       }
     }
     req.session.userId = user._id;
-    return { user };
+
+    const reformattedUser: User = {
+      _id: user._id,
+      email: user.email,
+      password: user.password,
+      createdAt: user.created_at,
+      updatedAt: user.updated_at,
+    };
+
+    return { user: reformattedUser };
   }
 
   @Mutation(() => UserResponse)
@@ -96,15 +116,15 @@ export class UserResolver {
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
     const user = await em.findOne(User, {
-      username: options.username.toLowerCase(),
+      email: options.email.toLowerCase(),
     });
 
     if (!user) {
       return {
         errors: [
           {
-            field: "username",
-            message: "that username doesn't exist",
+            field: "email",
+            message: "that email doesn't exist",
           },
         ],
       };
@@ -124,7 +144,6 @@ export class UserResolver {
     }
 
     req.session.userId = user._id;
-
     return { user };
   }
 

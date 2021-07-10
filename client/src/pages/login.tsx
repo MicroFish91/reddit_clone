@@ -18,7 +18,7 @@ const Login: React.FC<loginProps> = ({}) => {
     <Wrapper variant="small">
       {/* https://formik.org/docs/api/formik */}
       <Formik
-        initialValues={{ username: "", password: "" }}
+        initialValues={{ email: "", password: "" }}
         // https://formik.org/docs/api/formik#seterrors-fields--field-string-string---void
         onSubmit={async (values, { setErrors }) => {
           const response = await login({ options: values });
@@ -32,11 +32,7 @@ const Login: React.FC<loginProps> = ({}) => {
         {({ isSubmitting }) => (
           <Form>
             <FormControl>
-              <InputField
-                name="username"
-                placeholder="username"
-                label="Username"
-              />
+              <InputField name="email" placeholder="email" label="Email" />
               <Box mt={4}>
                 <InputField
                   name="password"
